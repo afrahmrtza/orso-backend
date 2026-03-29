@@ -1,6 +1,6 @@
 name: Orso Backend CI
 
-# CI berjalan setiap kali ada push atau pull request ke branch main
+# Workflow ini akan berjalan setiap kali ada push atau pull request ke branch main
 on:
   push:
     branches: [ main ]
@@ -11,7 +11,7 @@ jobs:
   phpunit-tests:
     runs-on: ubuntu-latest
 
-    # Service MySQL tambahan untuk testing jika diperlukan (opsional)
+    # Menyiapkan database MySQL di dalam runner GitHub untuk keperluan testing
     services:
       mysql:
         image: mysql:8.0
@@ -29,6 +29,7 @@ jobs:
     - name: Setup PHP
       uses: shivammathur/setup-php@v2
       with:
+        # Menggunakan PHP 8.2 agar kompatibel dengan PHPUnit 11
         php-version: '8.2'
         extensions: pdo, pdo_mysql, mbstring, gd
         coverage: xdebug
@@ -37,15 +38,22 @@ jobs:
       run: composer install --prefer-dist --no-progress
 
     - name: Create Upload Directories
+      # Membuat folder yang dibutuhkan Controller agar tidak error saat memindahkan file
       run: |
         mkdir -p public/uploads/menu
         mkdir -p public/uploads/testimoni
         chmod -R 777 public/uploads
 
+    - name: Set PHPUnit Permissions
+      # Memberikan izin eksekusi pada file binari PHPUnit agar bisa dijalankan di Linux
+      run: chmod +x vendor/bin/phpunit
+
     - name: Run White Box Tests
+      # Menyisipkan variabel environment untuk koneksi database testing
       env:
         DB_HOST: 127.0.0.1
         DB_NAME: orso_db
         DB_USER: root
         DB_PASS: root
+        MIDTRANS_SERVER_KEY: ${{ secrets.MIDTRANS_SERVER_KEY }}
       run: ./vendor/bin/phpunit tests
