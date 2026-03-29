@@ -1,0 +1,51 @@
+name: Orso Backend CI
+
+# CI berjalan setiap kali ada push atau pull request ke branch main
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  phpunit-tests:
+    runs-on: ubuntu-latest
+
+    # Service MySQL tambahan untuk testing jika diperlukan (opsional)
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_DATABASE: orso_db
+          MYSQL_ROOT_PASSWORD: root
+        ports:
+          - 3306:3306
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v3
+
+    - name: Setup PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: '8.1'
+        extensions: pdo, pdo_mysql, mbstring, gd
+        coverage: xdebug
+
+    - name: Install Dependencies
+      run: composer install --prefer-dist --no-progress
+
+    - name: Create Upload Directories
+      run: |
+        mkdir -p public/uploads/menu
+        mkdir -p public/uploads/testimoni
+        chmod -R 777 public/uploads
+
+    - name: Run White Box Tests
+      env:
+        DB_HOST: 127.0.0.1
+        DB_NAME: orso_db
+        DB_USER: root
+        DB_PASS: root
+      run: ./vendor/bin/phpunit tests
