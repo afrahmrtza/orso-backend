@@ -8,8 +8,22 @@ jobs:
   build-and-test:
     runs-on: ubuntu-latest
 
+    services:
+      mysql:
+        image: mysql:8
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: orso_db
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+
     steps:
-    - name: Checkout repository
+    - name: Checkout
       uses: actions/checkout@v3
 
     - name: Setup PHP
@@ -24,10 +38,10 @@ jobs:
         php composer.phar install
 
     - name: Dump Autoload
-      run: php composer.phar dump-autoload -o
+      run: php composer.phar dump-autoload
 
-    - name: Debug folder (cek penting!)
-      run: ls -R
+    - name: Wait for MySQL
+      run: sleep 10
 
     - name: Run PHPUnit
       run: php vendor/bin/phpunit
