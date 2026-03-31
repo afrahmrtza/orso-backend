@@ -3,7 +3,6 @@ name: CI Orso Backend
 on:
   push:
     branches: [ "main" ]
-  pull_request:
 
 jobs:
   build-and-test:
@@ -24,8 +23,11 @@ jobs:
         curl -sS https://getcomposer.org/installer | php
         php composer.phar install
 
-    - name: Fix permission
-      run: chmod +x vendor/bin/phpunit
+    - name: Dump Autoload
+      run: php composer.phar dump-autoload -o
 
-    - name: Run PHPUnit Test
-      run: vendor/bin/phpunit
+    - name: Debug folder (cek penting!)
+      run: ls -R
+
+    - name: Run PHPUnit
+      run: php vendor/bin/phpunit
