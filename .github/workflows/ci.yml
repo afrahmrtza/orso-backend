@@ -42,6 +42,10 @@ jobs:
 
     - name: Wait for MySQL
       run: sleep 10
-
+    
+    - name: Import Database
+      run: |
+        mysql -h 127.0.0.1 -u root -proot orso_db < database.sql
+      
     - name: Run PHPUnit
       run: php vendor/bin/phpunit
