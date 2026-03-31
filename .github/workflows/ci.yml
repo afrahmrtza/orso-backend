@@ -18,12 +18,14 @@ jobs:
       with:
         php-version: 8.2
         extensions: pdo, pdo_mysql
-        coverage: none
 
     - name: Install Composer
       run: |
         curl -sS https://getcomposer.org/installer | php
         php composer.phar install
+
+    - name: Fix permission
+      run: chmod +x vendor/bin/phpunit
 
     - name: Run PHPUnit Test
       run: vendor/bin/phpunit
