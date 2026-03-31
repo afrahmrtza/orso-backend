@@ -6,8 +6,8 @@ use PDO;
 class Db {
     private $host = '127.0.0.1';
     private $user = 'root';
-    private $pass = '';
-    private $dbname = 'orso_db'; // Sesuaikan dengan nama database kamu
+    private $pass = 'root';
+    private $dbname = 'orso_db';
 
     public function connect() {
         $conn_str = "mysql:host=$this->host;dbname=$this->dbname";
