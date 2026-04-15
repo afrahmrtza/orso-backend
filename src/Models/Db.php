@@ -4,7 +4,7 @@ namespace App\Models;
 use PDO;
 
 class Db {
-    private $host = '127.0.0.1';
+    private $host = 'db';
     private $user = 'root';
     private $pass = 'root';
     private $dbname = 'orso_db';

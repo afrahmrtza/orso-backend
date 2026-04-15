@@ -31,7 +31,23 @@ $app->add(function ($request, $handler) {
         ->withHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS');
 });
 
-// 3. RUTE UMUM 
+// 3. KONFIGURASI TWIG (View Engine)
+// Pastikan folder src/Views ada di struktur foldermu
+$twig = Twig::create(__DIR__ . '/../src/Views', ['cache' => false]);
+$app->add(TwigMiddleware::create($app, $twig));
+
+// --- INISIALISASI CONTROLLER DENGAN VIEW ---
+// Karena AdminController butuh Twig di __construct-nya
+$adminController = new AdminController($twig);
+
+
+// 4. RUTE TAMPILAN (VIEW ROUTES)
+// Rute untuk memunculkan halaman Login di Browser
+$app->get('/login', function ($request, $response) use ($twig) {
+    return $twig->render($response, 'login.php'); 
+});
+
+// 5. RUTE API UMUM
 $app->post('/users/register', UserController::class . ':register');
 $app->post('/auth/login', UserController::class . ':login');
 $app->get('/menu', MenuController::class . ':getAll'); 
@@ -40,72 +56,49 @@ $app->get('/users', UserController::class . ':getAllUsers');
 $app->put('/users/{id}', UserController::class . ':updateUser'); 
 $app->delete('/users/{id}', UserController::class . ':deleteUser'); 
 
-// 4. RUTE PELANGGAN (Wajib Login, Header X-Role: pelanggan/kasir/pemilik)
+// 6. RUTE PELANGGAN (Wajib Login)
 $app->group('', function ($group) {
-    $group->post('/order', OrderController::class . ':createOrder'); // Buat pesanan baru
-    $group->post('/testimoni', TestimoniController::class . ':create'); // Kirim ulasan baru
+    $group->post('/order', OrderController::class . ':createOrder');
+    $group->post('/testimoni', TestimoniController::class . ':create');
 })->add(new RoleMiddleware(['pelanggan', 'kasir', 'pemilik']));
 
-// 5. RUTE KASIR (Wajib Header X-Role: kasir/pemilik)
+// 7. RUTE KASIR
 $app->group('/kasir', function ($group) {
     $group->get('/orders', OrderController::class . ':getAllOrders');
     $group->get('/order/{id}', OrderController::class . ':getOrderDetail');
     $group->put('/order/{id}/status', OrderController::class . ':updateStatus');
 })->add(new RoleMiddleware(['kasir', 'pemilik']));
 
-// 6. RUTE OWNER (Wajib Header X-Role: pemilik)
+// 8. RUTE OWNER & MANAJEMEN
 $app->group('/owner', function ($group) {
-    // Laporan
     $group->get('/laporan/harian', ReportController::class . ':dailyReport');
     $group->get('/laporan/bulanan', ReportController::class . ':monthlyReport');
-
-    // Manajemen Menu (URL: /owner/menu)
-    $group->post('/menu', MenuController::class . ':create'); // Tambah menu
-    
-    // Gunakan MAP agar bisa terima PUT asli maupun POST (Spoofing)
+    $group->post('/menu', MenuController::class . ':create');
     $group->map(['PUT', 'POST'], '/menu/{id}', MenuController::class . ':update');
-    
-    $group->delete('/menu/{id}', MenuController::class . ':delete'); // Hapus menu
-
-    // Moderasi Testimoni
-    $group->put('/testimoni/{id}/approve', TestimoniController::class . ':approve'); // Setujui ulasan
-    $group->delete('/testimoni/{id}', TestimoniController::class . ':delete'); // Hapus ulasan
+    $group->delete('/menu/{id}', MenuController::class . ':delete');
+    $group->put('/testimoni/{id}/approve', TestimoniController::class . ':approve');
+    $group->delete('/testimoni/{id}', TestimoniController::class . ':delete');
 })->add(new RoleMiddleware(['pemilik']));
 
-// 7. WEBHOOK PAYMENT (Otomatis dari Midtrans)
-$app->post('/payment/notification', \App\Controllers\MidtransHandler::class . ':handleNotification');
-
-// Konfigurasi Twig
-$twig = Twig::create(__DIR__ . '/../src/Views', ['cache' => false]);
-$app->add(TwigMiddleware::create($app, $twig));
-
-// Grup Rute Admin
-$app->group('/admin', function ($group) {
-    $group->get('/dashboard', AdminController::class . ':index');
-    $group->get('/menu', AdminController::class . ':listMenu');
-    $group->get('/testimoni', AdminController::class . ':listTestimoni');
-    $group->post('/order/update', AdminController::class . ':updateStatus');
+// 9. GRUP RUTE TAMPILAN ADMIN (Menggunakan AdminController)
+$app->group('/admin', function ($group) use ($adminController) {
+    $group->get('/dashboard', [$adminController, 'index']);
+    $group->get('/menu', [$adminController, 'listMenu']);
+    $group->get('/testimoni', [$adminController, 'listTestimoni']);
+    $group->post('/order/update', [$adminController, 'updateStatus']);
 });
 
+// 10. API TAMBAHAN LAINNYA
+$app->post('/payment/notification', \App\Controllers\MidtransHandler::class . ':handleNotification');
 $app->post('/notification/handling', \App\Controllers\MidtransController::class . ':handleNotification');
-
-// Rute untuk melihat riwayat pesanan berdasarkan ID User
 $app->get('/orders/user/{id_user}', \App\Controllers\OrderController::class . ':getCustomerOrders');
 $app->get('/orders/detail/{id}', \App\Controllers\OrderController::class . ':getOrderDetail');
-
-// Rute cek pesanan per tanggal
 $app->get('/admin/orders/date/{date}', \App\Controllers\OrderController::class . ':getOrdersByDate');
-
-// Rute Dashboard Admin
 $app->get('/admin/orders', \App\Controllers\OrderController::class . ':getAllOrders');
 $app->put('/admin/orders/complete/{id}', \App\Controllers\OrderController::class . ':updateStatusSelesai');
-
-// Laporan & Testimoni
 $app->get('/admin/reports', \App\Controllers\OrderController::class . ':getReports');
 $app->put('/admin/testimoni/approve/{id}', \App\Controllers\TestimoniController::class . ':approveTestimoni');
 $app->get('/owner/testimoni', [TestimoniController::class, 'getAll']);
-
-// Rute Update Profile
 $app->put('/users/update/{id}', \App\Controllers\UserController::class . ':updateProfile');
 
 $app->run();

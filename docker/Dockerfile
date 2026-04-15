@@ -1,23 +1,22 @@
-# Menggunakan image PHP 8.2 dengan Apache
 FROM php:8.2-apache
 
-# Instal ekstensi PDO MySQL agar bisa terhubung ke database orso_db
+# Install ekstensi
 RUN docker-php-ext-install pdo pdo_mysql
 
-# Aktifkan mod_rewrite Apache (Penting untuk routing Slim Framework)
+# Aktifkan rewrite
 RUN a2enmod rewrite
 
-# Update konfigurasi Apache agar mengizinkan .htaccess
-RUN sed -i 's/AllowOverride None/AllowOverride All/' /etc/apache2/apache2.conf
+# Set document root ke public
+ENV APACHE_DOCUMENT_ROOT /var/www/html/public
 
-# Set working directory ke folder web server
-WORKDIR /var/www/html/
+# Update Apache config
+RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/sites-available/000-default.conf
 
-# Copy semua file proyek kamu ke dalam container
+# Copy project
 COPY . /var/www/html/
 
-# Berikan izin akses folder upload agar bisa simpan foto menu & testimoni
-RUN chmod -R 777 /var/www/html/public/uploads
+# Fix permission (PENTING)
+RUN chown -R www-data:www-data /var/www/html \
+    && chmod -R 755 /var/www/html
 
-# Port Apache
 EXPOSE 80

@@ -3,7 +3,9 @@ version: '3.8'
 services:
   # Service untuk Backend Slim kamu
   app:
-    build: .
+    build: 
+      context: .
+      dockerfile: docker/Dockerfile
     container_name: orso-backend
     ports:
       - "8000:80"
@@ -11,6 +13,7 @@ services:
       - .:/var/www/html
     depends_on:
       - db
+    restart : always
     networks:
       - orso-network
 
@@ -21,9 +24,9 @@ services:
     restart: always
     environment:
       MYSQL_DATABASE: orso_db
-      MYSQL_ROOT_PASSWORD: password_kamu
+      MYSQL_ROOT_PASSWORD: root
     ports:
-      - "3306:3306"
+      - "3307:3306"
     networks:
       - orso-network
 
