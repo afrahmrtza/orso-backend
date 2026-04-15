@@ -115,7 +115,7 @@ body {
         </div>
         <div class="col-md-4">
             <div class="card-order border-start border-success border-4">
-                <small class="text-muted fw-semibold">Pesanan Selesai (Hari Ini)</small>
+                <small class="text-muted fw-semibold">Pesanan Selesai</small>
                 <h2 id="count-selesai" class="fw-bold text-success m-0">0</h2>
             </div>
         </div>

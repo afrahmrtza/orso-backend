@@ -13,8 +13,6 @@ class RoleMiddleware {
     }
 
     public function __invoke(Request $request, Handler $handler) {
-        // Dalam skripsi nyata, ini biasanya diambil dari JWT Token.
-        // Untuk tahap awal ini, kita simulasikan pengecekan dari Header 'X-Role'.
         $userRole = $request->getHeaderLine('X-Role'); 
 
         if (!in_array($userRole, $this->allowedRoles)) {
