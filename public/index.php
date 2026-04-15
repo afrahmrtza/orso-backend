@@ -46,6 +46,10 @@ $adminController = new AdminController($twig);
 $app->get('/login', function ($request, $response) use ($twig) {
     return $twig->render($response, 'login.php'); 
 });
+// Rute untuk menampilkan halaman Dashboard Owner
+$app->get('/owner/dashboard-view', function ($request, $response) use ($twig) {
+    return $twig->render($response, 'dashboard_owner.php'); 
+});
 
 // 5. RUTE API UMUM
 $app->post('/users/register', UserController::class . ':register');
