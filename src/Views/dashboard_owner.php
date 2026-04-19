@@ -46,12 +46,12 @@ $nama_admin = $_SESSION['nama'] ?? 'Admin';
 
 <div class="main-content">
     <div class="tab-content">
-        <div class="tab-pane fade show active" id="tab-summary"><?php include 'Components/dashboard_summary'; ?></div>
-        <div class="tab-pane fade" id="tab-pesanan"><?php include 'Components/manage_pesanan'; ?></div>
-        <div class="tab-pane fade" id="tab-menu"><?php include 'Components/manage_menu'; ?></div>
-        <div class="tab-pane fade" id="tab-user"><?php include 'Components/manage_user'; ?></div>
-        <div class="tab-pane fade" id="tab-testimoni"><?php include 'Components/manage_testimoni'; ?></div>
-        <div class="tab-pane fade" id="tab-laporan-bulanan"><?php include 'Components/report_penjualan'; ?></div>
+        <div class="tab-pane fade show active" id="tab-summary"><?php include 'Components/dashboard_summary.php'; ?></div>
+        <div class="tab-pane fade" id="tab-pesanan"><?php include 'Components/manage_pesanan.php'; ?></div>
+        <div class="tab-pane fade" id="tab-menu"><?php include 'Components/manage_menu.php'; ?></div>
+        <div class="tab-pane fade" id="tab-user"><?php include 'Components/manage_user.php'; ?></div>
+        <div class="tab-pane fade" id="tab-testimoni"><?php include 'Components/manage_testimoni.php'; ?></div>
+        <div class="tab-pane fade" id="tab-laporan-bulanan"><?php include 'Components/report_penjualan.php'; ?></div>
     </div>
 </div>
 
