@@ -1,8 +1,13 @@
 <?php
 session_start();
 if (isset($_SESSION['role'])) {
-    if ($_SESSION['role'] == 'pemilik') header("Location: dashboard_owner.php");
-    else if ($_SESSION['role'] == 'kasir') header("Location: dashboard_kasir.php");
+    if ($_SESSION['role'] == 'pemilik') {
+        header("Location: /dashboard/owner");
+        exit();
+    } else if ($_SESSION['role'] == 'kasir') {
+        header("Location: /dashboard/kasir");
+        exit();
+    }
 }
 ?>
 <!DOCTYPE html>
@@ -10,8 +15,15 @@ if (isset($_SESSION['role'])) {
 <head>
     <meta charset="UTF-8">
     <title>Login - Orso Coffee</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Bootstrap -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Font -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Icon -->
     <script src="https://kit.fontawesome.com/4ad0b8b5a4.js" crossorigin="anonymous"></script>
 
     <style>
@@ -83,6 +95,10 @@ if (isset($_SESSION['role'])) {
             margin-bottom: 25px;
         }
 
+        #msg {
+            min-height: 20px;
+        }
+
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(-20px); }
             to { opacity: 1; transform: translateY(0); }
@@ -98,7 +114,7 @@ if (isset($_SESSION['role'])) {
     <form id="loginForm">
         <div class="input-group mb-3">
             <span class="input-group-text"><i class="fa fa-envelope"></i></span>
-            <input type="text" id="username" class="form-control" placeholder="Email" required>
+            <input type="email" id="username" class="form-control" placeholder="Email" required>
         </div>
 
         <div class="input-group mb-3">
@@ -117,28 +133,45 @@ if (isset($_SESSION['role'])) {
 <script>
 document.getElementById('loginForm').addEventListener('submit', async (e) => {
     e.preventDefault();
-    const res = await fetch('http://127.0.0.1:8000/auth/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-            email: document.getElementById('username').value,
-            password: document.getElementById('password').value
-        })
-    });
 
-    const result = await res.json();
-    if (res.ok) {
-        const formData = new FormData();
-        formData.append('id_user', result.user.id_user);
-        formData.append('role', result.user.role);
-        formData.append('nama', result.user.nama);
+    const email = document.getElementById('username').value;
+    const password = document.getElementById('password').value;
 
-        await fetch('set_session.php', { method: 'POST', body: formData });
+    try {
+        const res = await fetch('/auth/login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, password })
+        });
 
-        if (result.user.role === 'pemilik') window.location.href = 'dashboard_owner.php';
-        else if (result.user.role === 'kasir') window.location.href = 'dashboard_kasir.php';
-    } else {
-        document.getElementById('msg').innerText = "Email atau Password salah!";
+        const result = await res.json();
+
+        if (res.ok) {
+            const formData = new FormData();
+            formData.append('id_user', result.user.id_user);
+            formData.append('role', result.user.role);
+            formData.append('nama', result.user.nama);
+
+            await fetch('/set_session.php', {
+                method: 'POST',
+                body: formData
+            });
+
+            // redirect berdasarkan role
+            if (result.user.role === 'pemilik') {
+                window.location.replace('/dashboard/owner');
+            } else if (result.user.role === 'kasir') {
+                window.location.replace('/dashboard/kasir');
+            } else {
+                window.location.replace('/');
+            }
+
+        } else {
+            document.getElementById('msg').innerText = result.error || "Login gagal!";
+        }
+
+    } catch (err) {
+        document.getElementById('msg').innerText = "Server error!";
     }
 });
 </script>
