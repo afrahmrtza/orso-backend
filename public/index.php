@@ -32,23 +32,24 @@ $app->add(function ($request, $handler) {
 });
 
 // 3. KONFIGURASI TWIG (View Engine)
-// Pastikan folder src/Views ada di struktur foldermu
 $twig = Twig::create(__DIR__ . '/../src/Views', ['cache' => false]);
 $app->add(TwigMiddleware::create($app, $twig));
 
-// --- INISIALISASI CONTROLLER DENGAN VIEW ---
-// Karena AdminController butuh Twig di __construct-nya
 $adminController = new AdminController($twig);
 
-
 // 4. RUTE TAMPILAN (VIEW ROUTES)
-// Rute untuk memunculkan halaman Login di Browser
+// LOGIN
 $app->get('/login', function ($request, $response) use ($twig) {
     return $twig->render($response, 'login.php'); 
 });
-// Rute untuk menampilkan halaman Dashboard Owner
-$app->get('/owner/dashboard-view', function ($request, $response) use ($twig) {
+
+// DASHBOARD
+$app->get('/dashboard/owner', function ($request, $response) use ($twig) {
     return $twig->render($response, 'dashboard_owner.php'); 
+});
+
+$app->get('/dashboard/kasir', function ($request, $response) use ($twig) {
+    return $twig->render($response, 'dashboard_kasir.php'); 
 });
 
 // 5. RUTE API UMUM
