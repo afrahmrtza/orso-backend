@@ -40,23 +40,23 @@ $nama_admin = $_SESSION['nama'] ?? 'Admin';
         <button class="nav-link" data-bs-toggle="pill" data-bs-target="#tab-user" onclick="loadUsers()">👥 User</button>
         <button class="nav-link" data-bs-toggle="pill" data-bs-target="#tab-testimoni" onclick="loadTestimoni()">💬 Ulasan</button>
         <button class="nav-link" data-bs-toggle="pill" data-bs-target="#tab-laporan-bulanan" onclick="loadLaporanBulanan()">📜 Laporan</button>
-        <a href="logout.php" class="nav-link text-danger mt-5 text-decoration-none">🚪 Logout</a>
+        <a href="/logout" class="nav-link text-danger mt-5 text-decoration-none">🚪 Logout</a>
     </div>
 </div>
 
 <div class="main-content">
     <div class="tab-content">
-        <div class="tab-pane fade show active" id="tab-summary"><?php include 'Components/dashboard_summary.php'; ?></div>
-        <div class="tab-pane fade" id="tab-pesanan"><?php include 'Components/manage_pesanan.php'; ?></div>
-        <div class="tab-pane fade" id="tab-menu"><?php include 'Components/manage_menu.php'; ?></div>
-        <div class="tab-pane fade" id="tab-user"><?php include 'Components/manage_user.php'; ?></div>
-        <div class="tab-pane fade" id="tab-testimoni"><?php include 'Components/manage_testimoni.php'; ?></div>
-        <div class="tab-pane fade" id="tab-laporan-bulanan"><?php include 'Components/report_penjualan.php'; ?></div>
+        <div class="tab-pane fade show active" id="tab-summary"><?php include 'Components/dashboard_summary'; ?></div>
+        <div class="tab-pane fade" id="tab-pesanan"><?php include 'Components/manage_pesanan'; ?></div>
+        <div class="tab-pane fade" id="tab-menu"><?php include 'Components/manage_menu'; ?></div>
+        <div class="tab-pane fade" id="tab-user"><?php include 'Components/manage_user'; ?></div>
+        <div class="tab-pane fade" id="tab-testimoni"><?php include 'Components/manage_testimoni'; ?></div>
+        <div class="tab-pane fade" id="tab-laporan-bulanan"><?php include 'Components/report_penjualan'; ?></div>
     </div>
 </div>
 
 <script>
-    const BASE_URL = "http://127.0.0.1:8000";
+    const BASE_URL = "";
     const headers = { "X-Role": "pemilik" };
 </script>
 </body>

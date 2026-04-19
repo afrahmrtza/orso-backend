@@ -97,7 +97,7 @@ body {
                 Petugas: <?php echo htmlspecialchars($nama_kasir); ?>
             </span>
             <span class="me-3 text-white small" id="clock"></span>
-            <a href="logout.php" class="btn btn-outline-light btn-sm" onclick="return confirm('Selesaikan shift dan keluar?')">
+            <a href="/logout" class="btn btn-outline-light btn-sm" onclick="return confirm('Selesaikan shift dan keluar?')">
                 Logout
             </a>
         </div>
