@@ -5,65 +5,47 @@
 
 <div class="table-container">
     <table class="table table-hover align-middle">
-        <thead>
             <tr>
                 <th>Bulan & Tahun</th>
                 <th>Jumlah Transaksi</th>
                 <th>Total Pendapatan</th>
             </tr>
-        </thead>
         <tbody id="table-laporan-bulanan-body"></tbody>
     </table>
 </div>
 
 <script>
-    window.loadLaporan = async function() {
+    async function loadLaporan() {
+    try {
+        const rep = await fetch(`${BASE_URL}/admin/reports`, { headers }).then(r=>r.json());
+        document.getElementById("rep-hari").innerText = `Rp ${parseInt(rep.harian||0).toLocaleString()}`;
+        document.getElementById("rep-bulan").innerText = `Rp ${parseInt(rep.bulanan||0).toLocaleString()}`;
+
+        const menus = await fetch(`${BASE_URL}/menu`).then(r=>r.json());
+        document.getElementById("stat-menu").innerText = menus.length;
+
+        const orders = await fetch(`${BASE_URL}/admin/orders`, { headers }).then(r=>r.json());
+        document.getElementById("stat-pesanan").innerText = orders.length;
+
+        const testimonials = await fetch(`${BASE_URL}/owner/testimoni`, { headers }).then(r=>r.json());
+        const pending = testimonials.filter(t => t.status_persetujuan === 'pending').length;
+        document.getElementById("stat-testimoni").innerText = pending;
+    } catch (e) { console.error("Error Dashboard:", e); }
+    }   
+
+    async function loadLaporanBulanan() {
         try {
-            console.log("Fetching dashboard summary...");
-            const resRep = await fetch(`${BASE_URL}/admin/reports`, { headers });
-            const rep = await resRep.json();
-            
-            // Update elemen statistik di dashboard_summary jika ada
-            const elHari = document.getElementById("rep-hari");
-            const elBulan = document.getElementById("rep-bulan");
-            if (elHari) elHari.innerText = `Rp ${parseInt(rep.harian || 0).toLocaleString('id-ID')}`;
-            if (elBulan) elBulan.innerText = `Rp ${parseInt(rep.bulanan || 0).toLocaleString('id-ID')}`;
-
-            // Update statistik jumlah data
-            const menus = await fetch(`${BASE_URL}/menu`).then(r => r.json());
-            const elStatMenu = document.getElementById("stat-menu");
-            if (elStatMenu) elStatMenu.innerText = menus.length;
-
-            const orders = await fetch(`${BASE_URL}/admin/orders`, { headers }).then(r => r.json());
-            const elStatPesanan = document.getElementById("stat-pesanan");
-            if (elStatPesanan) elStatPesanan.innerText = orders.length;
-
-            const testimonials = await fetch(`${BASE_URL}/owner/testimoni`, { headers }).then(r => r.json());
-            const pending = testimonials.filter(t => t.status_persetujuan === 'pending').length;
-            const elStatTesti = document.getElementById("stat-testimoni");
-            if (elStatTesti) elStatTesti.innerText = pending;
-
-        } catch (e) { 
-            console.error("Error Dashboard Summary:", e); 
-        }
-    };
-
-    window.loadLaporanBulanan = async function() {
-        try {
-            console.log("Fetching monthly reports...");
             const res = await fetch(`${BASE_URL}/admin/orders`, { headers });
             const orders = await res.json();
         
-            // Filter hanya pesanan yang sudah selesai
             const ordersSelesai = orders.filter(o => o.status_pesanan === 'selesai');
 
-            const monthNames = [
-                "Januari", "Februari", "Maret", "April", "Mei", "Juni",
-                "Juli", "Agustus", "September", "Oktober", "November", "Desember"
-            ];
+            const monthNames = ["Januari", "Februari", "Maret", "April", "Mei", "Juni",
+                                "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
 
             const grouping = ordersSelesai.reduce((acc, order) => {
                 const tglDb = order.tgl_pesanan; 
+            
                 if (tglDb) {
                     const date = new Date(tglDb);
                     const bulan = monthNames[date.getMonth()];
@@ -96,9 +78,7 @@
             `).join('');
 
         } catch (e) {
-            console.error("Gagal memuat laporan bulanan:", e);
-            document.getElementById("table-laporan-bulanan-body").innerHTML = 
-                `<tr><td colspan="3" class="text-center text-danger">Gagal mengambil data dari server.</td></tr>`;
+            console.error("Gagal memuat laporan:", e);
         }
-    };
+    }
 </script>

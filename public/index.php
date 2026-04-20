@@ -42,6 +42,9 @@ $adminController = new AdminController($twig);
 $app->get('/login', function ($request, $response) use ($twig) {
     return $twig->render($response, 'login.php'); 
 });
+$app->get('/logout', function ($request, $response) use ($twig) {
+    return $twig->render($response, 'logout.php'); 
+});
 
 // DASHBOARD
 $app->get('/dashboard/owner', function ($request, $response) use ($twig) {
