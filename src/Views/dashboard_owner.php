@@ -34,13 +34,13 @@ $nama_admin = $_SESSION['nama'] ?? 'Admin';
     <p class="small text-warning mb-4">Halo, <?php echo htmlspecialchars($nama_admin); ?> ☕</p>
     <hr>
     <div class="nav flex-column nav-pills">
-        <button class="nav-link active" data-bs-toggle="pill" data-bs-target="#tab-summary" onclick="loadLaporan()">📊 Dashboard</button>
-        <button class="nav-link" data-bs-toggle="pill" data-bs-target="#tab-pesanan" onclick="loadOrders()">🛒 Pesanan</button>
-        <button class="nav-link" data-bs-toggle="pill" data-bs-target="#tab-menu" onclick="loadMenu()">☕ Menu</button>
-        <button class="nav-link" data-bs-toggle="pill" data-bs-target="#tab-user" onclick="loadUsers()">👥 User</button>
-        <button class="nav-link" data-bs-toggle="pill" data-bs-target="#tab-testimoni" onclick="loadTestimoni()">💬 Ulasan</button>
-        <button class="nav-link" data-bs-toggle="pill" data-bs-target="#tab-laporan-bulanan" onclick="loadLaporanBulanan()">📜 Laporan</button>
-        <a href="/logout" class="nav-link text-danger mt-5 text-decoration-none">🚪 Logout</a>
+        <button class="nav-link active" data-bs-toggle="pill" data-bs-target="#tab-summary" onclick="window.loadLaporan()">📊 Dashboard</button>
+        <button class="nav-link" data-bs-toggle="pill" data-bs-target="#tab-pesanan" onclick="window.loadOrders()">🛒 Pesanan</button>
+        <button class="nav-link" data-bs-toggle="pill" data-bs-target="#tab-menu" onclick="window.loadMenu()">☕ Menu</button>
+        <button class="nav-link" data-bs-toggle="pill" data-bs-target="#tab-user" onclick="window.loadUsers()">👥 User</button>
+        <button class="nav-link" data-bs-toggle="pill" data-bs-target="#tab-testimoni" onclick="window.loadTestimoni()">💬 Ulasan</button>
+        <button class="nav-link" data-bs-toggle="pill" data-bs-target="#tab-laporan-bulanan" onclick="window.loadLaporanBulanan()">📜 Laporan</button>
+        <a href="logout.php" class="nav-link text-danger mt-5 text-decoration-none">🚪 Logout</a>
     </div>
 </div>
 
@@ -56,8 +56,19 @@ $nama_admin = $_SESSION['nama'] ?? 'Admin';
 </div>
 
 <script>
-    const BASE_URL = "window.location.origin";
+    // 1. Definisikan BASE_URL secara dinamis agar port 8000 docker terbaca otomatis
+    const BASE_URL = window.location.origin;
     const headers = { "X-Role": "pemilik" };
+
+    // 2. Inisialisasi data saat halaman pertama kali dibuka
+    window.onload = function() {
+        console.log("Dashboard Orso Ready. BASE_URL:", BASE_URL);
+        if (typeof window.loadLaporan === 'function') {
+            window.loadLaporan();
+        } else {
+            console.error("Fungsi loadLaporan belum dimuat. Pastikan include Components/report_penjualan.php benar.");
+        }
+    };
 </script>
 </body>
 </html>
