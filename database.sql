@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Waktu pembuatan: 15 Apr 2026 pada 10.22
+-- Waktu pembuatan: 21 Apr 2026 pada 12.52
 -- Versi server: 10.4.32-MariaDB
 -- Versi PHP: 8.2.12
 
@@ -391,36 +391,37 @@ CREATE TABLE `menu` (
   `harga` decimal(10,2) NOT NULL,
   `kategori` varchar(50) DEFAULT NULL,
   `image_url` text DEFAULT NULL,
-  `deskripsi` text DEFAULT NULL
+  `deskripsi` text DEFAULT NULL,
+  `status` enum('tersedia','habis') DEFAULT 'tersedia'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data untuk tabel `menu`
 --
 
-INSERT INTO `menu` (`id_menu`, `nama_menu`, `harga`, `kategori`, `image_url`, `deskripsi`) VALUES
-(1, 'Strawberry Coffee', 25000.00, 'Coffee', 'Strawberry-Coffee.png', 'Espresso dengan sentuhan susu stroberi menghadirkan perpaduan rasa kopi yang unik, segar, dan seimbang. ☕🍓'),
-(2, 'Kopi Susu', 25000.00, 'Coffee', 'menu-1769152288.png', 'Perpaduan kopi dan susu yang menghasilkan rasa lembut, creamy, dan seimbang. ☕🥛'),
-(3, 'Americano', 18000.00, 'Coffee', 'menu-1769152417.png', 'Espresso yang dipadukan dengan air panas menghasilkan rasa kopi yang ringan dan aromatik. ☕'),
-(4, 'Cappucino', 25000.00, 'Coffee', 'menu-1769152606.png', 'Perpaduan espresso, susu, dan foam lembut yang menghasilkan rasa kopi seimbang dan creamy. ☕🥛'),
-(5, 'Coffee Caramel', 25000.00, 'Coffee', 'menu-1769152736.png', 'Espresso dengan sentuhan karamel manis menghadirkan rasa kopi yang lembut dan seimbang. ☕🍯'),
-(6, 'Mocha', 28000.00, 'Coffee', 'menu-1769153167.jpg', 'Espresso dengan cokelat dan susu menghadirkan rasa kopi yang manis dan creamy. ☕🍫'),
-(7, 'Sweet Creamy Latte', 25000.00, 'Coffee', 'menu-1769153526.jpg', 'Perpaduan espresso dan susu creamy dengan rasa manis yang lembut. ☕🥛'),
-(8, 'Coffee Strawberry Cheesecake', 28000.00, 'Coffee', 'menu-1769156303.png', 'Espresso dengan sentuhan cheesecake creamy dan stroberi segar yang lembut dan seimbang. ☕🍓🍰'),
-(9, 'Blake Rose', 25000.00, 'Coffee', 'menu-1769154313.png', 'Espresso dengan sentuhan aroma mawar menghadirkan rasa kopi yang unik dan elegan. ☕🌹'),
-(10, 'Cafe Latte', 25000.00, 'Coffee', 'menu-1769154169.png', 'Espresso dan susu segar menghasilkan rasa kopi yang lembut dan seimbang. ☕🥛'),
-(11, 'Lychee Tea', 25000.00, 'Tea', 'menu-1769154517.png', 'Teh dengan rasa leci manis yang segar dan harum. 🍃🍓'),
-(12, 'Thai Tea', 25000.00, 'Tea', 'menu-1769154573.png', 'Teh khas Thailand dengan rasa manis dan creamy. 🧡🥛'),
-(13, 'Matcha', 28000.00, 'Tea', 'menu-1769151903.jpg', 'Minuman teh hijau dengan rasa lembut dan menenangkan. 🍵💚'),
-(14, 'Lychee Lime Tea', 25000.00, 'Tea', 'menu-1769154645.png', 'Perpaduan teh, leci manis, dan jeruk nipis yang menyegarkan. 🍃🍋'),
-(15, 'Strawberry Tea', 25000.00, 'Tea', 'menu-1769154696.jpg', 'Teh dengan rasa stroberi manis dan segar. 🍓🍃'),
-(16, 'Classic Mojito', 23000.00, 'Mojito', 'menu-1769154755.jpg', 'Minuman segar dari mint dan jeruk nipis yang menyegarkan. 🍃🍋🥤'),
-(17, 'Strawberry Mojito', 25000.00, 'Mojito', 'menu-1769155070.jpg', 'Mojito segar dengan sentuhan stroberi manis dan asam. 🍓🍃🍋'),
-(18, 'Chocolate', 28000.00, 'Non-Coffee', 'menu-1769154861.jpg', 'Minuman cokelat dengan rasa manis dan creamy. 🍫🥛'),
-(19, 'Chocoberry', 30000.00, 'Non-Coffee', 'menu-1772009059.png', 'Perpaduan cokelat lembut dan susu stroberi segar yang manis. 🍫🍓'),
-(20, 'Red Velvet', 30000.00, 'Non-Coffee', 'menu-1770623316.png', 'Minuman dengan rasa red velvet yang lembut, manis, dan creamy. ❤️🥛'),
-(21, 'Chocopresso', 30000.00, 'Coffee', 'menu-1772008513.png', 'Perpaduan espresso dan cokelat yang menghasilkan rasa kuat, manis, dan kaya. ☕🍫'),
-(22, 'Caramel Latte', 30000.00, 'Non-Coffee', 'menu-1772008686.png', 'Minuman susu creamy dengan sentuhan karamel manis yang lembut dan menyegarkan. 🥛🍯');
+INSERT INTO `menu` (`id_menu`, `nama_menu`, `harga`, `kategori`, `image_url`, `deskripsi`, `status`) VALUES
+(1, 'Strawberry Coffee', 25000.00, 'Coffee', 'Strawberry-Coffee.png', 'Espresso dengan sentuhan susu stroberi menghadirkan perpaduan rasa kopi yang unik, segar, dan seimbang. ☕🍓', 'tersedia'),
+(2, 'Kopi Susu', 25000.00, 'Coffee', 'menu-1769152288.png', 'Perpaduan kopi dan susu yang menghasilkan rasa lembut, creamy, dan seimbang. ☕🥛', 'tersedia'),
+(3, 'Americano', 18000.00, 'Coffee', 'menu-1769152417.png', 'Espresso yang dipadukan dengan air panas menghasilkan rasa kopi yang ringan dan aromatik. ☕', 'tersedia'),
+(4, 'Cappucino', 25000.00, 'Coffee', 'menu-1769152606.png', 'Perpaduan espresso, susu, dan foam lembut yang menghasilkan rasa kopi seimbang dan creamy. ☕🥛', 'tersedia'),
+(5, 'Coffee Caramel', 25000.00, 'Coffee', 'menu-1769152736.png', 'Espresso dengan sentuhan karamel manis menghadirkan rasa kopi yang lembut dan seimbang. ☕🍯', 'tersedia'),
+(6, 'Mocha', 28000.00, 'Coffee', 'menu-1769153167.jpg', 'Espresso dengan cokelat dan susu menghadirkan rasa kopi yang manis dan creamy. ☕🍫', 'tersedia'),
+(7, 'Sweet Creamy Latte', 25000.00, 'Coffee', 'menu-1769153526.jpg', 'Perpaduan espresso dan susu creamy dengan rasa manis yang lembut. ☕🥛', 'tersedia'),
+(8, 'Coffee Strawberry Cheesecake', 28000.00, 'Coffee', 'menu-1769156303.png', 'Espresso dengan sentuhan cheesecake creamy dan stroberi segar yang lembut dan seimbang. ☕🍓🍰', 'tersedia'),
+(9, 'Blake Rose', 25000.00, 'Coffee', 'menu-1769154313.png', 'Espresso dengan sentuhan aroma mawar menghadirkan rasa kopi yang unik dan elegan. ☕🌹', 'tersedia'),
+(10, 'Cafe Latte', 25000.00, 'Coffee', 'menu-1769154169.png', 'Espresso dan susu segar menghasilkan rasa kopi yang lembut dan seimbang. ☕🥛', 'tersedia'),
+(11, 'Lychee Tea', 25000.00, 'Tea', 'menu-1769154517.png', 'Teh dengan rasa leci manis yang segar dan harum. 🍃🍓', 'tersedia'),
+(12, 'Thai Tea', 25000.00, 'Tea', 'menu-1769154573.png', 'Teh khas Thailand dengan rasa manis dan creamy. 🧡🥛', 'tersedia'),
+(13, 'Matcha', 28000.00, 'Tea', 'menu-1769151903.jpg', 'Minuman teh hijau dengan rasa lembut dan menenangkan. 🍵💚', 'tersedia'),
+(14, 'Lychee Lime Tea', 25000.00, 'Tea', 'menu-1769154645.png', 'Perpaduan teh, leci manis, dan jeruk nipis yang menyegarkan. 🍃🍋', 'tersedia'),
+(15, 'Strawberry Tea', 25000.00, 'Tea', 'menu-1769154696.jpg', 'Teh dengan rasa stroberi manis dan segar. 🍓🍃', 'tersedia'),
+(16, 'Classic Mojito', 23000.00, 'Mojito', 'menu-1769154755.jpg', 'Minuman segar dari mint dan jeruk nipis yang menyegarkan. 🍃🍋🥤', 'tersedia'),
+(17, 'Strawberry Mojito', 25000.00, 'Mojito', 'menu-1769155070.jpg', 'Mojito segar dengan sentuhan stroberi manis dan asam. 🍓🍃🍋', 'tersedia'),
+(18, 'Chocolate', 28000.00, 'Non-Coffee', 'menu-1769154861.jpg', 'Minuman cokelat dengan rasa manis dan creamy. 🍫🥛', 'tersedia'),
+(19, 'Chocoberry', 30000.00, 'Non-Coffee', 'menu-1772009059.png', 'Perpaduan cokelat lembut dan susu stroberi segar yang manis. 🍫🍓', 'tersedia'),
+(20, 'Red Velvet', 30000.00, 'Non-Coffee', 'menu-1770623316.png', 'Minuman dengan rasa red velvet yang lembut, manis, dan creamy. ❤️🥛', 'tersedia'),
+(21, 'Chocopresso', 30000.00, 'Coffee', 'menu-1772008513.png', 'Perpaduan espresso dan cokelat yang menghasilkan rasa kuat, manis, dan kaya. ☕🍫', 'tersedia'),
+(22, 'Caramel Latte', 30000.00, 'Non-Coffee', 'menu-1772008686.png', 'Minuman susu creamy dengan sentuhan karamel manis yang lembut dan menyegarkan. 🥛🍯', 'tersedia');
 
 -- --------------------------------------------------------
 
@@ -1517,29 +1518,7 @@ INSERT INTO `pesanan` (`id_pesanan`, `id_user`, `tgl_pesanan`, `total_harga`, `s
 (1072, 8, '2026-04-07 08:17:23', 35081.00, 'pending', NULL),
 (1073, 7, '2026-04-08 08:17:23', 22617.00, 'selesai', NULL),
 (1074, 7, '2026-03-21 08:17:23', 26983.00, 'diproses', NULL),
-(1075, 7, '2026-04-12 08:17:23', 63806.00, 'pending', NULL),
-(1076, 6, '2026-03-18 08:17:23', 28022.00, 'dibatalkan', NULL),
-(1077, 10, '2026-04-11 08:17:23', 59547.00, 'pending', NULL),
-(1078, 7, '2026-04-07 08:17:23', 36949.00, 'dibatalkan', NULL),
-(1079, 8, '2026-04-07 08:17:23', 90060.00, 'pending', NULL),
-(1080, 6, '2026-04-07 08:17:23', 51499.00, 'dibatalkan', NULL),
-(1081, 8, '2026-03-20 08:17:23', 52742.00, 'selesai', NULL),
-(1082, 7, '2026-03-25 08:17:23', 60601.00, 'diproses', NULL),
-(1083, 9, '2026-04-03 08:17:23', 48686.00, 'pending', NULL),
-(1084, 6, '2026-04-08 08:17:23', 31166.00, 'pending', NULL),
-(1085, 10, '2026-03-24 08:17:23', 94563.00, 'diproses', NULL),
-(1086, 7, '2026-04-14 08:17:23', 81529.00, 'diproses', NULL),
-(1087, 8, '2026-04-10 08:17:23', 65940.00, 'pending', NULL),
-(1088, 7, '2026-04-06 08:17:23', 98708.00, 'pending', NULL),
-(1089, 9, '2026-03-18 08:17:23', 43254.00, 'selesai', NULL),
-(1090, 6, '2026-03-18 08:17:23', 98425.00, 'selesai', NULL),
-(1091, 10, '2026-03-21 08:17:23', 46367.00, 'diproses', NULL),
-(1092, 8, '2026-03-18 08:17:23', 38621.00, 'pending', NULL),
-(1093, 10, '2026-04-07 08:17:23', 61683.00, 'dibatalkan', NULL),
-(1094, 10, '2026-03-16 08:17:23', 87753.00, 'dibatalkan', NULL),
-(1095, 8, '2026-03-28 08:17:23', 41316.00, 'diproses', NULL),
-(1096, 6, '2026-04-05 08:17:23', 91137.00, 'diproses', NULL),
-(1097, 9, '2026-03-23 08:17:23', 61739.00, 'selesai', NULL);
+(1075, 7, '2026-04-12 08:17:23', 63806.00, 'pending', NULL);
 
 -- --------------------------------------------------------
 

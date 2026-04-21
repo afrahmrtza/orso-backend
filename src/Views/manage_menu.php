@@ -13,6 +13,7 @@
                 <th>Nama</th>
                 <th>Kategori</th>
                 <th>Harga</th>
+                <th>Status</th> <!-- 🔥 TAMBAHAN -->
                 <th>Opsi</th>
             </tr>
         </thead>
@@ -33,7 +34,14 @@
                     <select name="kategori" class="form-select mb-3">
                         <option value="Coffee">Coffee</option>
                         <option value="Non-Coffee">Non-Coffee</option>
-                        <option value="Makanan">Makanan</option>
+                        <option value="Non-Coffee">Tea</option>
+                        <option value="Non-Coffee">Mojito</option>
+                    </select>
+
+                    <!-- 🔥 STATUS TAMBAH -->
+                    <select name="status" class="form-select mb-3">
+                        <option value="tersedia">Tersedia</option>
+                        <option value="habis">Habis</option>
                     </select>
 
                     <textarea name="deskripsi" class="form-control mb-3" placeholder="Deskripsi"></textarea>
@@ -69,6 +77,12 @@
                         <option value="Makanan">Makanan</option>
                     </select>
 
+                    <!-- 🔥 STATUS EDIT -->
+                    <select id="edit-status" name="status" class="form-select mb-3">
+                        <option value="tersedia">Tersedia</option>
+                        <option value="habis">Habis</option>
+                    </select>
+
                     <textarea id="edit-deskripsi" name="deskripsi" class="form-control mb-3"></textarea>
 
                     <label class="small text-muted mb-1">Ganti Gambar (opsional):</label>
@@ -99,6 +113,14 @@ async function loadMenu() {
                 <td>${m.nama_menu}</td>
                 <td>${m.kategori}</td>
                 <td>Rp ${parseInt(m.harga).toLocaleString()}</td>
+
+                <!-- 🔥 STATUS BADGE -->
+                <td>
+                    ${m.status === 'habis' 
+                        ? '<span class="badge bg-danger">Habis</span>' 
+                        : '<span class="badge bg-success">Tersedia</span>'}
+                </td>
+
                 <td>
                     <button onclick='openEditModal(${JSON.stringify(m)})'
                         class="btn btn-sm text-primary">Edit</button>
@@ -122,7 +144,9 @@ async function saveMenu(e) {
     try {
         const res = await fetch(`${BASE_URL}/owner/menu`, {
             method: "POST",
-            headers,
+            headers: {
+                "X-Role": "pemilik"
+            },
             body: fd
         });
 
@@ -148,6 +172,9 @@ function openEditModal(menu) {
     document.getElementById('edit-kategori').value = menu.kategori;
     document.getElementById('edit-deskripsi').value = menu.deskripsi || '';
 
+    // 🔥 SET STATUS
+    document.getElementById('edit-status').value = menu.status || 'tersedia';
+
     new bootstrap.Modal(document.getElementById('modalEditMenu')).show();
 }
 
@@ -161,7 +188,9 @@ async function updateMenu(e) {
     try {
         const res = await fetch(`${BASE_URL}/owner/menu/${id}`, {
             method: "POST",
-            headers,
+            headers: {
+                "X-Role": "pemilik"
+            },
             body: fd
         });
 
