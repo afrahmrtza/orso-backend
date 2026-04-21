@@ -55,6 +55,30 @@ $app->get('/dashboard/kasir', function ($request, $response) use ($twig) {
     return $twig->render($response, 'dashboard_kasir.php'); 
 });
 
+$app->get('/report/penjualan', function ($request, $response) use ($twig) {
+    return $twig->render($response, 'report_penjualan.php');
+});
+
+$app->get('/dashboard/summary', function ($request, $response) use ($twig) {
+    return $twig->render($response, 'dashboard_summary.php');
+});
+
+$app->get('/manage/menu', function ($request, $response) use ($twig) {
+    return $twig->render($response, 'manage_menu.php');
+});
+
+$app->get('/manage/pesanan', function ($request, $response) use ($twig) {
+    return $twig->render($response, 'manage_pesanan.php');
+});
+
+$app->get('/manage/user', function ($request, $response) use ($twig) {
+    return $twig->render($response, 'manage_user.php');
+});
+
+$app->get('/manage/testimoni', function ($request, $response) use ($twig) {
+    return $twig->render($response, 'manage_testimoni.php');
+});
+
 // 5. RUTE API UMUM
 $app->post('/users/register', UserController::class . ':register');
 $app->post('/auth/login', UserController::class . ':login');
