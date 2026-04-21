@@ -3,16 +3,16 @@
     <small class="text-muted">Total pendapatan yang berstatus 'Selesai'.</small>
 </div>
 
-<div class="table-container">
-    <table class="table table-hover align-middle">
-            <tr>
-                <th>Bulan & Tahun</th>
-                <th>Jumlah Transaksi</th>
-                <th>Total Pendapatan</th>
-            </tr>
-        <tbody id="table-laporan-bulanan-body"></tbody>
-    </table>
-</div>
+<table class="table table-hover align-middle">
+    <thead>
+        <tr>
+            <th>Bulan & Tahun</th>
+            <th>Jumlah Transaksi</th>
+            <th>Total Pendapatan</th>
+        </tr>
+    </thead>
+    <tbody id="table-laporan-bulanan-body"></tbody>
+</table>
 
 <script>
     async function loadLaporan() {

@@ -134,6 +134,11 @@ body {
 <script>
 const BASE_URL = "http://127.0.0.1:8000";
 
+const headers = {
+    "Content-Type": "application/json",
+    "X-Role": "pemilik"
+};
+
 async function loadPage(url) {
     try {
         const res = await fetch(BASE_URL + url);
@@ -156,7 +161,7 @@ async function loadPage(url) {
             if (url.includes("menu") && typeof loadMenu === "function") loadMenu();
             if (url.includes("user") && typeof loadUsers === "function") loadUsers();
             if (url.includes("testimoni") && typeof loadTestimoni === "function") loadTestimoni();
-            if (url.includes("laporan") && typeof loadLaporanBulanan === "function") loadLaporanBulanan();
+            if (url.includes("report") && typeof loadLaporanBulanan === "function") loadLaporanBulanan();
         }, 100);
 
     } catch (err) {
