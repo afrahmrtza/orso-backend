@@ -34,8 +34,8 @@
                     <select name="kategori" class="form-select mb-3">
                         <option value="Coffee">Coffee</option>
                         <option value="Non-Coffee">Non-Coffee</option>
-                        <option value="Non-Coffee">Tea</option>
-                        <option value="Non-Coffee">Mojito</option>
+                        <option value="Tea">Tea</option>
+                        <option value="Mojito">Mojito</option>
                     </select>
 
                     <!-- 🔥 STATUS TAMBAH -->
@@ -74,7 +74,8 @@
                     <select id="edit-kategori" name="kategori" class="form-select mb-3">
                         <option value="Coffee">Coffee</option>
                         <option value="Non-Coffee">Non-Coffee</option>
-                        <option value="Makanan">Makanan</option>
+                        <option value="Tea">Tea</option>
+                        <option value="Mojito">Mojito</option>
                     </select>
 
                     <!-- 🔥 STATUS EDIT -->
