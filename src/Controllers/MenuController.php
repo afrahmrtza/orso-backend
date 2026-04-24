@@ -33,8 +33,8 @@ class MenuController {
         $foto = $uploadedFiles['image_url'] ?? null;
 
         // 🔥 STATUS DEFAULT
-        $status = in_array($data['status'] ?? '', ['tersedia', 'habis'])
-            ? $data['status']
+        $status = in_array($data['status_menu'] ?? '', ['tersedia', 'habis'])
+            ? $data['status_menu']
             : 'tersedia';
 
         $nama_file = null;
@@ -54,7 +54,7 @@ class MenuController {
             $db = new Db();
             $conn = $db->connect();
 
-            $sql = "INSERT INTO menu (nama_menu, harga, kategori, deskripsi, image_url, status) 
+            $sql = "INSERT INTO menu (nama_menu, harga, kategori, deskripsi, image_url, status_menu) 
                     VALUES (:nama, :harga, :kategori, :deskripsi, :img, :status)";
 
             $stmt = $conn->prepare($sql);
@@ -84,8 +84,8 @@ class MenuController {
         $foto = $uploadedFiles['image_url'] ?? null;
 
         // 🔥 VALIDASI STATUS
-        $status = in_array($data['status'] ?? '', ['tersedia', 'habis'])
-            ? $data['status']
+        $status = in_array($data['status_menu'] ?? '', ['tersedia', 'habis'])
+            ? $data['status_menu']
             : 'tersedia';
 
         try {
@@ -105,7 +105,7 @@ class MenuController {
                 $foto->moveTo($directory . $nama_file);
 
                 $sql = "UPDATE menu SET nama_menu=:nama, harga=:harga, kategori=:kategori, 
-                        deskripsi=:deskripsi, image_url=:img, status=:status 
+                        deskripsi=:deskripsi, image_url=:img, status_menu=:status 
                         WHERE id_menu=:id";
 
                 $params = [
@@ -121,7 +121,7 @@ class MenuController {
             } else {
 
                 $sql = "UPDATE menu SET nama_menu=:nama, harga=:harga, kategori=:kategori, 
-                        deskripsi=:deskripsi, status=:status 
+                        deskripsi=:deskripsi, status_menu=:status 
                         WHERE id_menu=:id";
 
                 $params = [

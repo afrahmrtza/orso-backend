@@ -12,117 +12,146 @@ use Exception;
 class OrderController {
 
     // 1. MEMBUAT PESANAN BARU 
-    public function createOrder(Request $request, Response $response) {
-        $data = $request->getParsedBody();
-        $db = new Db();
-        $conn = $db->connect();
+public function createOrder(Request $request, Response $response) {
+    date_default_timezone_set('Asia/Makassar');
 
-        // Validasi Awal: Memastikan data user dan item tersedia
-        if (!isset($data['id_user']) || !isset($data['items']) || empty($data['items'])) {
-            $response->getBody()->write(json_encode(["error" => "Data tidak lengkap (id_user atau items kosong)."]));
-            return $response->withHeader('Content-Type', 'application/json')->withStatus(400);
-        }
+    $data = $request->getParsedBody();
+    $db = new Db();
+    $conn = $db->connect();
 
-        // Konfigurasi Midtrans sandbox
-        Config::$serverKey = 'Mid-server-Fv0j-OGf-rcrajTkL7HbF4EK'; 
-        Config::$isProduction = false;
-        Config::$isSanitized = true;
-        Config::$is3ds = true;
-
-        try {
-            $conn->beginTransaction();
-
-            // LOGIKA PEMBATALAN OTOMATIS:
-            $sqlAutoCancel = "UPDATE pesanan SET status_pesanan = 'dibatalkan' 
-                              WHERE status_pesanan = 'pending' 
-                              AND tgl_pesanan < NOW() - INTERVAL 30 MINUTE";
-            $conn->exec($sqlAutoCancel);
-
-            $total_harga_final = 0;
-            $items_dengan_harga = [];
-
-            // 2. HITUNG OTOMATIS: Ambil harga asli dari database
-            foreach ($data['items'] as $item) {
-                $stmtMenu = $conn->prepare("SELECT nama_menu, harga FROM menu WHERE id_menu = :id");
-                $stmtMenu->execute([':id' => $item['id_menu']]);
-                $menu = $stmtMenu->fetch(PDO::FETCH_ASSOC);
-
-                if (!$menu) {
-                    throw new Exception("Menu dengan ID " . $item['id_menu'] . " tidak ditemukan.");
-                }
-
-                $subtotal = $menu['harga'] * $item['jumlah_pesanan'];
-                $total_harga_final += $subtotal;
-
-                $items_dengan_harga[] = [
-                    'id_menu' => $item['id_menu'],
-                    'nama_menu' => $menu['nama_menu'],
-                    'qty' => $item['jumlah_pesanan'],
-                    'harga_satuan' => $menu['harga'],
-                    'subtotal' => $subtotal
-                ];
-            }
-
-            // 3. Simpan ke tabel 'pesanan'
-            $sqlOrder = "INSERT INTO pesanan (id_user, total_harga, status_pesanan, tgl_pesanan) 
-                         VALUES (:id_user, :total, 'pending', NOW())";
-            $stmtOrder = $conn->prepare($sqlOrder);
-            $stmtOrder->execute([
-                ':id_user' => $data['id_user'],
-                ':total'   => $total_harga_final
-            ]);
-            $idPesanan = $conn->lastInsertId();
-
-            // 4. Simpan ke 'detail_pesanan'
-            foreach ($items_dengan_harga as $item) {
-                $sqlDetail = "INSERT INTO detail_pesanan (id_pesanan, id_menu, jumlah_pesanan, total_harga) 
-                              VALUES (:id_p, :id_m, :qty, :subtotal)";
-                $stmtDetail = $conn->prepare($sqlDetail);
-                $stmtDetail->execute([
-                    ':id_p'     => $idPesanan,
-                    ':id_m'     => $item['id_menu'],
-                    ':qty'      => $item['qty'],
-                    ':subtotal' => $item['subtotal']
-                ]);
-            }
-
-            // 5. Integrasi Midtrans dengan batas waktu 10 menit
-            $params = [
-                'transaction_details' => [
-                    'order_id' => 'ORSO-' . $idPesanan . '-' . time(),
-                    'gross_amount' => (int)$total_harga_final,
-                ],
-                'customer_details' => [
-                    'first_name' => $data['nama_pelanggan'] ?? 'Pelanggan Orso',
-                ],
-                'expiry' => [
-                    'unit' => 'minutes',
-                    'duration' => 10
-                ]
-            ];
-
-            $snapToken = Snap::getSnapToken($params);
-
-            // Simpan snap_token
-            $stmtToken = $conn->prepare("UPDATE pesanan SET snap_token = :token WHERE id_pesanan = :id");
-            $stmtToken->execute([':token' => $snapToken, ':id' => $idPesanan]);
-
-            $conn->commit();
-            
-            $response->getBody()->write(json_encode([
-                "message" => "Order berhasil dibuat",
-                "snap_token" => $snapToken,
-                "total_yang_harus_dibayar" => $total_harga_final,
-                "id_pesanan" => $idPesanan
-            ]));
-            return $response->withHeader('Content-Type', 'application/json');
-
-        } catch (Exception $e) {
-            if ($conn->inTransaction()) { $conn->rollBack(); }
-            $response->getBody()->write(json_encode(["error" => $e->getMessage()]));
-            return $response->withHeader('Content-Type', 'application/json')->withStatus(500);
-        }
+    if (!isset($data['id_user']) || !isset($data['items']) || empty($data['items'])) {
+        $response->getBody()->write(json_encode([
+            "error" => "Data tidak lengkap (id_user atau items kosong)."
+        ]));
+        return $response->withHeader('Content-Type', 'application/json')->withStatus(400);
     }
+
+    // Midtrans config
+    Config::$serverKey = 'Mid-server-Fv0j-OGf-rcrajTkL7HbF4EK';
+    Config::$isProduction = false;
+    Config::$isSanitized = true;
+    Config::$is3ds = true;
+
+    try {
+        $conn->beginTransaction();
+
+        $expired = date('Y-m-d H:i:s', strtotime('-10 minutes'));
+        $sqlAutoCancel = "UPDATE pesanan 
+                          SET status_pesanan = 'dibatalkan' 
+                          WHERE status_pesanan = 'pending' 
+                          AND tgl_pesanan < :expired";
+        $stmtAuto = $conn->prepare($sqlAutoCancel);
+        $stmtAuto->execute([':expired' => $expired]);
+
+        $total_harga_final = 0;
+        $items_dengan_harga = [];
+
+        foreach ($data['items'] as $item) {
+
+            $stmtMenu = $conn->prepare("
+                SELECT nama_menu, harga, status_menu 
+                FROM menu 
+                WHERE id_menu = :id
+            ");
+            $stmtMenu->execute([':id' => $item['id_menu']]);
+            $menu = $stmtMenu->fetch(PDO::FETCH_ASSOC);
+
+            if (!$menu) {
+                throw new Exception("Menu dengan ID " . $item['id_menu'] . " tidak ditemukan.");
+            }
+
+            if ($menu['status_menu'] !== 'tersedia') {
+                throw new Exception("Menu '" . $menu['nama_menu'] . "' sedang habis dan tidak bisa dipesan.");
+            }
+
+            $subtotal = $menu['harga'] * $item['jumlah_pesanan'];
+            $total_harga_final += $subtotal;
+
+            $items_dengan_harga[] = [
+                'id_menu' => $item['id_menu'],
+                'nama_menu' => $menu['nama_menu'],
+                'qty' => $item['jumlah_pesanan'],
+                'harga_satuan' => $menu['harga'],
+                'subtotal' => $subtotal
+            ];
+        }
+
+        $waktuSekarang = date('Y-m-d H:i:s');
+
+        $sqlOrder = "INSERT INTO pesanan (id_user, total_harga, status_pesanan, tgl_pesanan) 
+                     VALUES (:id_user, :total, 'pending', :tgl)";
+        $stmtOrder = $conn->prepare($sqlOrder);
+        $stmtOrder->execute([
+            ':id_user' => $data['id_user'],
+            ':total'   => $total_harga_final,
+            ':tgl'     => $waktuSekarang
+        ]);
+
+        $idPesanan = $conn->lastInsertId();
+
+        foreach ($items_dengan_harga as $item) {
+            $sqlDetail = "INSERT INTO detail_pesanan (id_pesanan, id_menu, jumlah_pesanan, total_harga) 
+                          VALUES (:id_p, :id_m, :qty, :subtotal)";
+            $stmtDetail = $conn->prepare($sqlDetail);
+            $stmtDetail->execute([
+                ':id_p'     => $idPesanan,
+                ':id_m'     => $item['id_menu'],
+                ':qty'      => $item['qty'],
+                ':subtotal' => $item['subtotal']
+            ]);
+        }
+
+        // MIDTRANS
+        $params = [
+            'transaction_details' => [
+                'order_id' => 'ORSO-' . $idPesanan . '-' . time(),
+                'gross_amount' => (int)$total_harga_final,
+            ],
+            'customer_details' => [
+                'first_name' => $data['nama_pelanggan'] ?? 'Pelanggan Orso',
+            ],
+            'expiry' => [
+                'unit' => 'minutes',
+                'duration' => 10
+            ]
+        ];
+
+        $snapToken = Snap::getSnapToken($params);
+
+        // SIMPAN TOKEN
+        $stmtToken = $conn->prepare("
+            UPDATE pesanan 
+            SET snap_token = :token 
+            WHERE id_pesanan = :id
+        ");
+        $stmtToken->execute([
+            ':token' => $snapToken,
+            ':id' => $idPesanan
+        ]);
+
+        $conn->commit();
+
+        $response->getBody()->write(json_encode([
+            "message" => "Order berhasil dibuat",
+            "snap_token" => $snapToken,
+            "total_yang_harus_dibayar" => $total_harga_final,
+            "id_pesanan" => $idPesanan
+        ]));
+
+        return $response->withHeader('Content-Type', 'application/json');
+
+    } catch (Exception $e) {
+        if ($conn->inTransaction()) {
+            $conn->rollBack();
+        }
+
+        $response->getBody()->write(json_encode([
+            "error" => $e->getMessage()
+        ]));
+
+        return $response->withHeader('Content-Type', 'application/json')->withStatus(500);
+    }
+}
 
     // 2. RIWAYAT PESANAN
     public function getCustomerOrders(Request $request, Response $response, array $args) {

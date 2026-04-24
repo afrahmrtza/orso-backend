@@ -38,8 +38,8 @@
                         <option value="Mojito">Mojito</option>
                     </select>
 
-                    <!-- 🔥 STATUS TAMBAH -->
-                    <select name="status" class="form-select mb-3">
+                    <!-- STATUS TAMBAH -->
+                    <select name="status_menu" class="form-select mb-3">
                         <option value="tersedia">Tersedia</option>
                         <option value="habis">Habis</option>
                     </select>
@@ -79,7 +79,7 @@
                     </select>
 
                     <!-- 🔥 STATUS EDIT -->
-                    <select id="edit-status" name="status" class="form-select mb-3">
+                    <select id="edit-status" name="status_menu" class="form-select mb-3">
                         <option value="tersedia">Tersedia</option>
                         <option value="habis">Habis</option>
                     </select>
@@ -117,7 +117,7 @@ async function loadMenu() {
 
                 <!-- 🔥 STATUS BADGE -->
                 <td>
-                    ${m.status === 'habis' 
+                    ${m.status_menu === 'habis' 
                         ? '<span class="badge bg-danger">Habis</span>' 
                         : '<span class="badge bg-success">Tersedia</span>'}
                 </td>
@@ -174,7 +174,7 @@ function openEditModal(menu) {
     document.getElementById('edit-deskripsi').value = menu.deskripsi || '';
 
     // 🔥 SET STATUS
-    document.getElementById('edit-status').value = menu.status || 'tersedia';
+    document.getElementById('edit-status').value = menu.status_menu || 'tersedia';
 
     new bootstrap.Modal(document.getElementById('modalEditMenu')).show();
 }

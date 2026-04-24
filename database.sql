@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Waktu pembuatan: 21 Apr 2026 pada 12.52
+-- Waktu pembuatan: 24 Apr 2026 pada 07.41
 -- Versi server: 10.4.32-MariaDB
 -- Versi PHP: 8.2.12
 
@@ -392,15 +392,15 @@ CREATE TABLE `menu` (
   `kategori` varchar(50) DEFAULT NULL,
   `image_url` text DEFAULT NULL,
   `deskripsi` text DEFAULT NULL,
-  `status` enum('tersedia','habis') DEFAULT 'tersedia'
+  `status_menu` enum('tersedia','habis') DEFAULT 'tersedia'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data untuk tabel `menu`
 --
 
-INSERT INTO `menu` (`id_menu`, `nama_menu`, `harga`, `kategori`, `image_url`, `deskripsi`, `status`) VALUES
-(1, 'Strawberry Coffee', 25000.00, 'Coffee', 'Strawberry-Coffee.png', 'Espresso dengan sentuhan susu stroberi menghadirkan perpaduan rasa kopi yang unik, segar, dan seimbang. ☕🍓', 'tersedia'),
+INSERT INTO `menu` (`id_menu`, `nama_menu`, `harga`, `kategori`, `image_url`, `deskripsi`, `status_menu`) VALUES
+(1, 'Strawberry Coffee', 25000.00, 'Coffee', 'Strawberry-Coffee.png', 'Espresso dengan sentuhan susu stroberi menghadirkan perpaduan rasa kopi yang unik, segar, dan seimbang. ☕🍓', 'habis'),
 (2, 'Kopi Susu', 25000.00, 'Coffee', 'menu-1769152288.png', 'Perpaduan kopi dan susu yang menghasilkan rasa lembut, creamy, dan seimbang. ☕🥛', 'tersedia'),
 (3, 'Americano', 18000.00, 'Coffee', 'menu-1769152417.png', 'Espresso yang dipadukan dengan air panas menghasilkan rasa kopi yang ringan dan aromatik. ☕', 'tersedia'),
 (4, 'Cappucino', 25000.00, 'Coffee', 'menu-1769152606.png', 'Perpaduan espresso, susu, dan foam lembut yang menghasilkan rasa kopi seimbang dan creamy. ☕🥛', 'tersedia'),
@@ -410,7 +410,7 @@ INSERT INTO `menu` (`id_menu`, `nama_menu`, `harga`, `kategori`, `image_url`, `d
 (8, 'Coffee Strawberry Cheesecake', 28000.00, 'Coffee', 'menu-1769156303.png', 'Espresso dengan sentuhan cheesecake creamy dan stroberi segar yang lembut dan seimbang. ☕🍓🍰', 'tersedia'),
 (9, 'Blake Rose', 25000.00, 'Coffee', 'menu-1769154313.png', 'Espresso dengan sentuhan aroma mawar menghadirkan rasa kopi yang unik dan elegan. ☕🌹', 'tersedia'),
 (10, 'Cafe Latte', 25000.00, 'Coffee', 'menu-1769154169.png', 'Espresso dan susu segar menghasilkan rasa kopi yang lembut dan seimbang. ☕🥛', 'tersedia'),
-(11, 'Lychee Tea', 25000.00, 'Tea', 'menu-1769154517.png', 'Teh dengan rasa leci manis yang segar dan harum. 🍃🍓', 'tersedia'),
+(11, 'Lychee Tea', 25000.00, 'Tea', 'menu-1769154517.png', 'Teh dengan rasa leci manis yang segar dan harum. 🍃🍓', 'habis'),
 (12, 'Thai Tea', 25000.00, 'Tea', 'menu-1769154573.png', 'Teh khas Thailand dengan rasa manis dan creamy. 🧡🥛', 'tersedia'),
 (13, 'Matcha', 28000.00, 'Tea', 'menu-1769151903.jpg', 'Minuman teh hijau dengan rasa lembut dan menenangkan. 🍵💚', 'tersedia'),
 (14, 'Lychee Lime Tea', 25000.00, 'Tea', 'menu-1769154645.png', 'Perpaduan teh, leci manis, dan jeruk nipis yang menyegarkan. 🍃🍋', 'tersedia'),
